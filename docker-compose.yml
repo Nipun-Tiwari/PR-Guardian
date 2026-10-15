@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-prguardian}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-prguardian_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-prguardian}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prguardian}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER:-prguardian}:${POSTGRES_PASSWORD:-prguardian_dev}@postgres:5432/${POSTGRES_DB:-prguardian}
+      DEMO_MODE_ENABLED: "true"
+      AI_REVIEW_ENABLED: "false"
+      LIVE_GITHUB_ENABLED: "false"
+      STATIC_ANALYSIS_ENABLED: "true"
+      GITHUB_PUBLISH_ENABLED: "false"
+      LIVE_REVIEW_RATE_LIMIT_ENABLED: "true"
+      COST_LIMIT_ENFORCED: "true"
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://${POSTGRES_USER:-prguardian}:${POSTGRES_PASSWORD:-prguardian_dev}@postgres:5432/${POSTGRES_DB:-prguardian}
+      DEMO_MODE_ENABLED: "true"
+      AI_REVIEW_ENABLED: "false"
+      LIVE_GITHUB_ENABLED: "false"
+      WORKER_POLL_INTERVAL_MS: "2000"
+      WORKER_CONCURRENCY: "1"
+      WORKER_MAX_ATTEMPTS: "3"
+      WORKER_LEASE_SECONDS: "120"
+      WORKER_JOB_TIMEOUT_SECONDS: "600"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

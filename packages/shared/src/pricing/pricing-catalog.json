@@ -1,0 +1,19 @@
+{
+  "catalogVersion": 1,
+  "currency": "USD",
+  "lastUpdated": "2026-10-15",
+  "models": [
+    {
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-6",
+      "displayName": "Claude Sonnet 4.6",
+      "effectiveFrom": "2026-10-15",
+      "inputUsdPerMillion": 3.0,
+      "outputUsdPerMillion": 15.0,
+      "cacheWrite5mUsdPerMillion": null,
+      "cacheWrite1hUsdPerMillion": null,
+      "cacheReadUsdPerMillion": null,
+      "notes": "Illustrative values — verify at anthropic.com/pricing before release"
+    }
+  ]
+}

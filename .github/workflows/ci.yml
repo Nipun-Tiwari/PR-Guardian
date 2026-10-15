@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Type-check, Lint, Test, Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: prguardian
+          POSTGRES_PASSWORD: prguardian_test
+          POSTGRES_DB: prguardian_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://prguardian:prguardian_test@localhost:5432/prguardian_test
+      NODE_ENV: test
+      DEMO_MODE_ENABLED: "true"
+      AI_REVIEW_ENABLED: "false"
+      LIVE_GITHUB_ENABLED: "false"
+      STATIC_ANALYSIS_ENABLED: "true"
+      GITHUB_PUBLISH_ENABLED: "false"
+      LIVE_REVIEW_RATE_LIMIT_ENABLED: "true"
+      COST_LIMIT_ENFORCED: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run db:generate -w packages/database
+
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
+        working-directory: packages/database
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
