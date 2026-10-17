@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --build --noEmit",
     "lint": "eslint src tests",
     "test": "vitest run",
     "dev": "tsx watch src/index.ts"
