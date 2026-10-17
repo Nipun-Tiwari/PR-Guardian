@@ -2,13 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "composite": true
   },
-  "include": ["src/**/*"],
-  "references": [
-    { "path": "../api" },
-    { "path": "../../packages/shared" },
-    { "path": "../../packages/database" },
-    { "path": "../../packages/observability" }
-  ]
+  "include": ["src/**/*"]
 }
