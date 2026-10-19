@@ -11,11 +11,7 @@ export interface RequestWithId extends Request {
   id: string;
 }
 
-export function requestIdMiddleware(
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-): void {
+export function requestIdMiddleware(req: Request, _res: Response, next: NextFunction): void {
   (req as RequestWithId).id = generateRequestId();
   next();
 }

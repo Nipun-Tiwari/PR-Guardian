@@ -108,13 +108,13 @@ pr-guardian/
 
 All features are controlled by environment variables:
 
-| Flag | Default | Purpose |
-|---|---|---|
-| `DEMO_MODE_ENABLED` | `true` | Public recruiter demo — always keep enabled |
-| `AI_REVIEW_ENABLED` | `false` | LLM review (enabled in M5) |
-| `LIVE_GITHUB_ENABLED` | `false` | Real GitHub integration (enabled in M2+) |
-| `STATIC_ANALYSIS_ENABLED` | `true` | ESLint/Semgrep analysis (enabled in M4) |
-| `GITHUB_PUBLISH_ENABLED` | `false` | Check Run publishing (enabled in M6) |
+| Flag                      | Default | Purpose                                     |
+| ------------------------- | ------- | ------------------------------------------- |
+| `DEMO_MODE_ENABLED`       | `true`  | Public recruiter demo — always keep enabled |
+| `AI_REVIEW_ENABLED`       | `false` | LLM review (enabled in M5)                  |
+| `LIVE_GITHUB_ENABLED`     | `false` | Real GitHub integration (enabled in M2+)    |
+| `STATIC_ANALYSIS_ENABLED` | `true`  | ESLint/Semgrep analysis (enabled in M4)     |
+| `GITHUB_PUBLISH_ENABLED`  | `false` | Check Run publishing (enabled in M6)        |
 
 ---
 
@@ -126,17 +126,17 @@ See [docs/local-webhook-setup.md](docs/local-webhook-setup.md) for ngrok setup a
 
 ## Milestones
 
-| Milestone | Scope |
-|---|---|
+| Milestone | Scope                                         |
+| --------- | --------------------------------------------- |
 | **M0** ✅ | Monorepo scaffold, shared schemas, CI, Docker |
-| **M1** | Public demo dashboard with fixture data |
-| **M2** | GitHub App auth and repository installation |
-| **M3** | Webhook ingress and PostgreSQL job queue |
-| **M4** | Diff processing and static analysis |
-| **M5** | LLM review and finding validation |
-| **M6** | GitHub Check Run publishing |
-| **M7** | Live dashboard and feedback |
-| **M8** | Public deployment and hardening |
+| **M1**    | Public demo dashboard with fixture data       |
+| **M2**    | GitHub App auth and repository installation   |
+| **M3**    | Webhook ingress and PostgreSQL job queue      |
+| **M4**    | Diff processing and static analysis           |
+| **M5**    | LLM review and finding validation             |
+| **M6**    | GitHub Check Run publishing                   |
+| **M7**    | Live dashboard and feedback                   |
+| **M8**    | Public deployment and hardening               |
 
 ---
 
@@ -144,10 +144,10 @@ See [docs/local-webhook-setup.md](docs/local-webhook-setup.md) for ngrok setup a
 
 All application endpoints use the `/api/v1/` prefix.
 
-| Endpoint | Description |
-|---|---|
-| `GET /healthz` | Liveness check |
-| `GET /readyz` | Readiness check |
+| Endpoint       | Description      |
+| -------------- | ---------------- |
+| `GET /healthz` | Liveness check   |
+| `GET /readyz`  | Readiness check  |
 | `GET /api/v1/` | API version info |
 
 Error responses follow [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) with `application/problem+json`.

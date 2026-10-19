@@ -1,10 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ZodError } from 'zod';
-import {
-  ApiProblemV1Schema,
-  FindingV1Schema,
-  ReviewSummaryV1Schema,
-} from '../src/index.js';
+import { ApiProblemV1Schema, FindingV1Schema, ReviewSummaryV1Schema } from '../src/index.js';
 
 describe('ApiProblemV1Schema', () => {
   const valid = {

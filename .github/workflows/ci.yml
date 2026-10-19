@@ -54,11 +54,15 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma client
-        run: npm run db:generate -w packages/database
+        run: npx prisma generate
+        working-directory: packages/database
 
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
         working-directory: packages/database
+
+      - name: Build
+        run: npm run build
 
       - name: Type-check
         run: npm run typecheck
@@ -71,6 +75,3 @@ jobs:
 
       - name: Test
         run: npm run test
-
-      - name: Build
-        run: npm run build

@@ -40,10 +40,10 @@ const configSchema = z.object({
 const result = configSchema.safeParse(process.env);
 
 if (!result.success) {
-  const missing = result.error.errors
-    .map((e) => `  ${e.path.join('.')}: ${e.message}`)
-    .join('\n');
-  throw new Error(`Invalid configuration:\n${missing}\n\nCheck your .env file against .env.example`);
+  const missing = result.error.errors.map((e) => `  ${e.path.join('.')}: ${e.message}`).join('\n');
+  throw new Error(
+    `Invalid configuration:\n${missing}\n\nCheck your .env file against .env.example`,
+  );
 }
 
 export const config = result.data;
