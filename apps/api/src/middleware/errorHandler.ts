@@ -3,12 +3,7 @@ import { ZodError } from 'zod';
 import type { ApiProblemV1 } from '@prguardian/shared';
 import type { RequestWithId } from './requestId.js';
 
-export function errorHandler(
-  err: unknown,
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-): void {
+export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction): void {
   const requestId = (req as RequestWithId).id ?? 'unknown';
 
   if (err instanceof ZodError) {

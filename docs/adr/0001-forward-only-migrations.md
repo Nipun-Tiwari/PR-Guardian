@@ -26,11 +26,11 @@ Use **forward-only migrations** with an **expand-and-contract** compatibility st
 
 ### Rollback strategy
 
-| Scenario | Action |
-|---|---|
-| App deployment fails, schema is compatible | Roll back the application binary. No schema change needed. |
-| Migration fails before a destructive change | Diagnose and apply a corrective forward migration. |
-| Destructive migration applied | Use a documented recovery SQL script (reviewed for data loss, tested before use) and a backup/export taken before the migration. |
+| Scenario                                    | Action                                                                                                                           |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| App deployment fails, schema is compatible  | Roll back the application binary. No schema change needed.                                                                       |
+| Migration fails before a destructive change | Diagnose and apply a corrective forward migration.                                                                               |
+| Destructive migration applied               | Use a documented recovery SQL script (reviewed for data loss, tested before use) and a backup/export taken before the migration. |
 
 ### What is out of scope
 
