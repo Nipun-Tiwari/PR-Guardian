@@ -35,6 +35,7 @@ const configSchema = z.object({
     .default('true'),
   RATE_LIMIT_DEMO_RPM: z.coerce.number().int().min(1).default(60),
   RATE_LIMIT_AUTH_ATTEMPTS: z.coerce.number().int().min(1).default(10),
+  API_CORS_ORIGIN: z.string().optional(),
 });
 
 const result = configSchema.safeParse(process.env);
