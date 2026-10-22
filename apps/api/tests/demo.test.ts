@@ -3,7 +3,7 @@ import request from 'supertest';
 import { createApp } from '../src/server.js';
 import { ReviewSummaryV1Schema } from '@prguardian/shared';
 import { FindingV1Schema } from '@prguardian/shared';
-import { DEMO_REVIEWS, DEMO_FINDINGS, DEMO_REVIEW_IDS } from '@prguardian/shared';
+import { DEMO_FINDINGS, DEMO_REVIEW_IDS } from '@prguardian/shared';
 
 const app = createApp();
 const knownReviewId = DEMO_REVIEW_IDS[0]!;
