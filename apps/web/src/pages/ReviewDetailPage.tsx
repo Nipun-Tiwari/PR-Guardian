@@ -41,7 +41,10 @@ export function ReviewDetailPage() {
     total,
     loading: findingsLoading,
     error: findingsError,
-  } = useDemoFindings(id ?? '', { severity, category });
+  } = useDemoFindings(id ?? '', {
+    ...(severity !== undefined && { severity }),
+    ...(category !== undefined && { category }),
+  });
 
   function clearFilters() {
     setSearchParams({});
