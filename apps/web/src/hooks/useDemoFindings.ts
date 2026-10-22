@@ -41,7 +41,6 @@ export function useDemoFindings(
       });
 
     return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviewId, params.severity, params.category]);
 
   return { findings, total, loading, error };
