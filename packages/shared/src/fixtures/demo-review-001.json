@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "c7f3a1b2-d4e5-4f60-8a9b-c0d1e2f34567",
+  "mode": "demo",
+  "repository": {
+    "id": "repo-demo-001",
+    "owner": "acme-corp",
+    "name": "api-gateway"
+  },
+  "pullRequest": {
+    "number": 17,
+    "title": "feat: add per-client rate limiting with token bucket algorithm",
+    "url": "https://github.com/acme-corp/api-gateway/pull/17"
+  },
+  "headSha": "f3a9b21c4e87d65",
+  "status": "succeeded",
+  "findingsSummary": {
+    "total": 10,
+    "critical": 2,
+    "high": 2,
+    "medium": 2,
+    "low": 2,
+    "info": 2
+  },
+  "startedAt": "2026-10-15T09:00:00.000Z",
+  "completedAt": "2026-10-15T09:01:45.000Z"
+}
