@@ -320,3 +320,25 @@ Maintained as the single source of truth for significant architectural, technica
 **Alternatives:** Use `number` type (loses precision for large GitHub IDs above 2^53), custom JSON serializer.
 **Rationale:** String representation preserves full precision, is JSON-safe, and is easily parsed back with `BigInt()`. All GitHub numeric IDs fit comfortably as strings.
 **Consequences:** API consumers receive GitHub user/repo/installation IDs as strings. Frontend `AuthUser` type has `githubUserId: string`. Any numeric comparison must use `BigInt()` conversion.
+
+---
+
+### D-026 — Nullable FK Columns for Webhook-Initiated Records
+
+**Date:** 2026-10-24
+**Decision:** `RepositoryInstallation.createdByUserId` and `Repository.ownedByUserId` are nullable (`String?`). Webhook-initiated installation records may arrive before any user session exists; requiring a non-null FK would block job creation.
+**Context:** M3 webhook handler receives `installation:created` events without a browser session. The `sender.id` in the payload may or may not match a known `User` row.
+**Alternatives:** Block repository creation when sender is unknown (loses data), use a synthetic "SYSTEM" user FK (complicates auth queries).
+**Rationale:** Nullable expansion is the correct expand-and-contract move. The `GET /api/v1/repositories` endpoint already filters `where: { ownedByUserId: user.id }` so NULL-owned repos are invisible to the user endpoint. Best-effort sender lookup populates the FK when the user is already in the DB.
+**Consequences:** Auth queries that filter by `ownedByUserId` continue to work correctly. NULL means "installed via webhook by an unrecognized account"; these records are backfillable in M4 after identity resolution.
+
+---
+
+### D-027 — Raw-Body Scoping for Webhook HMAC Verification
+
+**Date:** 2026-10-24
+**Decision:** Mount the webhook router BEFORE `express.json()` in `server.ts`. The webhook route applies `express.raw({ type: '*/*', limit: '1mb' })` internally, capturing raw bytes in `req.body` for HMAC verification before JSON parsing.
+**Context:** `express.json()` consumes the request stream and replaces `req.body` with a parsed object. HMAC verification requires the original raw bytes to match what GitHub signed.
+**Alternatives:** Global raw-body middleware (disrupts all other routes), `rawBody` npm package (extra dependency).
+**Rationale:** `express.raw()` is built into Express 4. Scoping it to the webhook router via mount order is the minimal, zero-dependency approach. The scoped raw parser runs only for `/webhooks/github`.
+**Consequences:** The webhook handler must JSON-parse `req.body.toString('utf8')` manually after signature verification. All other routes continue to receive a parsed JS object in `req.body` from `express.json()`.

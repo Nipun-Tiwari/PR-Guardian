@@ -5,6 +5,7 @@ import session from 'express-session';
 import { requestIdMiddleware } from './middleware/requestId.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { router } from './routes/index.js';
+import { webhookRouter } from './routes/webhooks.js';
 import { config } from './config.js';
 import { getClient } from '@prguardian/database';
 import { PrismaSessionStore } from './lib/prismaSessionStore.js';
@@ -49,6 +50,10 @@ export function createApp(): express.Application {
       },
     }),
   );
+
+  // Webhook router must be mounted BEFORE express.json() — it uses express.raw() internally
+  // to preserve raw bytes for HMAC-SHA256 signature verification
+  app.use(webhookRouter);
 
   app.use(express.json({ limit: '1mb' }));
   app.use(requestIdMiddleware);

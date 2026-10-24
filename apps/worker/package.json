@@ -2,18 +2,22 @@
   "name": "@prguardian/worker",
   "version": "0.1.0",
   "private": true,
-  "main": "dist/index.js",
+  "main": "dist/start.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc --build",
     "typecheck": "tsc --build --noEmit",
     "lint": "eslint src tests",
     "test": "vitest run",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/start.ts"
   },
   "dependencies": {
     "@prguardian/database": "*",
     "@prguardian/observability": "*",
-    "@prguardian/shared": "*"
+    "@prguardian/shared": "*",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
