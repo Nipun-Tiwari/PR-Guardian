@@ -29,9 +29,7 @@ describe('verifyGitHubSignature', () => {
     const tampered = Buffer.from('{"action":"closed"}');
     const sig = sign(original, SECRET);
     expect(() => verifyGitHubSignature(tampered, SECRET, sig)).toThrow(WebhookSignatureError);
-    expect(() => verifyGitHubSignature(tampered, SECRET, sig)).toThrow(
-      'Invalid webhook signature',
-    );
+    expect(() => verifyGitHubSignature(tampered, SECRET, sig)).toThrow('Invalid webhook signature');
   });
 
   it('throws WebhookSignatureError when the wrong secret is used', () => {

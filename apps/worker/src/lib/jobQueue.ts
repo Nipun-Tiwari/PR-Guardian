@@ -70,7 +70,10 @@ export async function handleJobFailure(
   const db = getClient();
   const errorMessage = error instanceof Error ? error.message : String(error);
 
-  logger.error({ jobId: job.id, attempts: job.attempts, error: errorMessage }, 'Job processing failed');
+  logger.error(
+    { jobId: job.id, attempts: job.attempts, error: errorMessage },
+    'Job processing failed',
+  );
 
   if (job.attempts < job.max_attempts) {
     await db.reviewJob.update({

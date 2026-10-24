@@ -60,4 +60,3 @@ export function startWorker(config: WorkerConfig = workerConfig): void {
     process.exit(1);
   });
 }
-

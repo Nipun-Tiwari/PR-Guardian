@@ -120,8 +120,7 @@ async function handlePullRequestEvent(
   const installation = payload['installation'] as { id: number } | undefined;
   const repository = payload['repository'] as { id: number } | undefined;
   const pullRequest = payload['pull_request'] as
-    | { number: number; head: { sha: string } }
-    | undefined;
+    { number: number; head: { sha: string } } | undefined;
 
   if (!installation || !repository || !pullRequest) {
     logger.warn({ payload }, 'pull_request event missing required fields');
@@ -140,10 +139,7 @@ async function handlePullRequestEvent(
     },
   });
 
-  logger.info(
-    { jobId: job.id, prNumber: pullRequest.number, action },
-    'Review job enqueued',
-  );
+  logger.info({ jobId: job.id, prNumber: pullRequest.number, action }, 'Review job enqueued');
 }
 
 async function handleInstallationEvent(
@@ -152,12 +148,10 @@ async function handleInstallationEvent(
 ): Promise<void> {
   const db = getClient();
   const installation = payload['installation'] as
-    | { id: number; account: { id: number; login: string } }
-    | undefined;
+    { id: number; account: { id: number; login: string } } | undefined;
   const sender = payload['sender'] as { id: number } | undefined;
   const repositories = payload['repositories'] as
-    | Array<{ id: number; name: string; full_name: string }>
-    | undefined;
+    Array<{ id: number; name: string; full_name: string }> | undefined;
 
   if (!installation) {
     logger.warn('installation event missing installation field');

@@ -29,7 +29,7 @@ model User {
 
   sessions                Session[]
   repositories            Repository[]
-  repositoryInstallations RepositoryInstallation?[]
+  repositoryInstallations RepositoryInstallation[]
 
   @@map("users")
 }

@@ -164,6 +164,30 @@ exports.Prisma.RepositoryInstallationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.WebhookDeliveryScalarFieldEnum = {
+  id: 'id',
+  githubDeliveryId: 'githubDeliveryId',
+  event: 'event',
+  action: 'action',
+  receivedAt: 'receivedAt'
+};
+
+exports.Prisma.ReviewJobScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  installationId: 'installationId',
+  repositoryId: 'repositoryId',
+  prNumber: 'prNumber',
+  headSha: 'headSha',
+  attempts: 'attempts',
+  maxAttempts: 'maxAttempts',
+  leaseExpiresAt: 'leaseExpiresAt',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -193,11 +217,20 @@ exports.InstallationStatus = exports.$Enums.InstallationStatus = {
   removed: 'removed'
 };
 
+exports.ReviewJobStatus = exports.$Enums.ReviewJobStatus = {
+  pending: 'pending',
+  running: 'running',
+  succeeded: 'succeeded',
+  failed: 'failed'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
   Repository: 'Repository',
-  RepositoryInstallation: 'RepositoryInstallation'
+  RepositoryInstallation: 'RepositoryInstallation',
+  WebhookDelivery: 'WebhookDelivery',
+  ReviewJob: 'ReviewJob'
 };
 
 /**

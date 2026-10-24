@@ -1,15 +1,17 @@
-import { describe, it, expect, afterEach, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { getClient } from '@prguardian/database';
 import { claimJob, processJob, handleJobFailure, type ReviewJobRow } from '../src/lib/jobQueue.js';
 import { workerConfig } from '../src/config.js';
 
 const db = getClient();
 
-async function createPendingJob(overrides?: Partial<{
-  attempts: number;
-  maxAttempts: number;
-  leaseExpiresAt: Date | null;
-}>): Promise<string> {
+async function createPendingJob(
+  overrides?: Partial<{
+    attempts: number;
+    maxAttempts: number;
+    leaseExpiresAt: Date | null;
+  }>,
+): Promise<string> {
   const job = await db.reviewJob.create({
     data: {
       status: 'pending',

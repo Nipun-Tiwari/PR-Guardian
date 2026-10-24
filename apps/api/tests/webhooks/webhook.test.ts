@@ -32,10 +32,7 @@ describe('POST /webhooks/github — signature verification', () => {
       deliveryId,
     );
 
-    const res = await request(app)
-      .post('/webhooks/github')
-      .set(headers)
-      .send(body);
+    const res = await request(app).post('/webhooks/github').set(headers).send(body);
 
     expect(res.status).toBe(401);
     expect(res.body.code).toBe('AUTHENTICATION_REQUIRED');
@@ -177,12 +174,14 @@ describe('POST /webhooks/github — event routing', () => {
 
     // Cleanup
     await db.repository.deleteMany({ where: { githubInstallationId: BigInt(installationId) } });
-    await db.repositoryInstallation.delete({ where: { githubInstallationId: BigInt(installationId) } });
+    await db.repositoryInstallation.delete({
+      where: { githubInstallationId: BigInt(installationId) },
+    });
     await cleanupDelivery(deliveryId);
   });
 
   it('populates createdByUserId when sender matches a known user (IT-12)', async () => {
-    const { userId, cookie: _cookie } = await createAuthenticatedSession({ githubUserId: BigInt(999888) });
+    const { userId } = await createAuthenticatedSession({ githubUserId: BigInt(999888) });
     const deliveryId = `install-known-sender-${Date.now()}`;
     const installationId = Math.floor(Math.random() * 1_000_000) + 200_000;
     const payload = makeInstallationPayload('created', installationId, 999888);
@@ -203,7 +202,9 @@ describe('POST /webhooks/github — event routing', () => {
 
     // Cleanup
     await db.repository.deleteMany({ where: { githubInstallationId: BigInt(installationId) } });
-    await db.repositoryInstallation.delete({ where: { githubInstallationId: BigInt(installationId) } });
+    await db.repositoryInstallation.delete({
+      where: { githubInstallationId: BigInt(installationId) },
+    });
     await cleanupDelivery(deliveryId);
     await cleanupTestUser(userId);
   });
@@ -240,7 +241,9 @@ describe('POST /webhooks/github — event routing', () => {
     expect(installation!.status).toBe('removed');
     expect(installation!.removedAt).not.toBeNull();
 
-    await db.repositoryInstallation.delete({ where: { githubInstallationId: BigInt(installationId) } });
+    await db.repositoryInstallation.delete({
+      where: { githubInstallationId: BigInt(installationId) },
+    });
     await cleanupDelivery(deliveryId);
   });
 });
@@ -268,8 +271,6 @@ function makeInstallationPayload(action: string, installationId: number, senderI
       account: { id: 42, login: 'testorg' },
     },
     sender: senderId ? { id: senderId } : { id: 0 },
-    repositories: [
-      { id: installationId + 1, name: 'test-repo', full_name: 'testorg/test-repo' },
-    ],
+    repositories: [{ id: installationId + 1, name: 'test-repo', full_name: 'testorg/test-repo' }],
   };
 }
