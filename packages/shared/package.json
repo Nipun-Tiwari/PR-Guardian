@@ -6,12 +6,16 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./fixtures": {
+      "types": "./dist/fixtures/index.d.ts",
       "import": "./dist/fixtures/index.js",
-      "types": "./dist/fixtures/index.d.ts"
+      "require": "./dist/fixtures/index.js",
+      "default": "./dist/fixtures/index.js"
     }
   },
   "scripts": {
