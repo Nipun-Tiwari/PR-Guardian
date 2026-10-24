@@ -14,7 +14,7 @@
       "env": ["DATABASE_URL", "NODE_ENV", "DEMO_MODE_ENABLED", "VITE_API_BASE_URL"]
     },
     "db:generate": {
-      "outputs": ["src/generated/**"]
+      "outputs": ["dist/generated/**"]
     },
     "db:migrate": {
       "dependsOn": ["db:generate"]

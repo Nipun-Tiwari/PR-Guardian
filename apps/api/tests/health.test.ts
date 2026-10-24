@@ -14,11 +14,11 @@ describe('GET /healthz', () => {
 });
 
 describe('GET /readyz', () => {
-  it('returns 200 with status ok', async () => {
+  it('returns 200 with database check ok when DB is available', async () => {
     const res = await request(app).get('/readyz');
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('ok');
-    expect(res.body.checks).toBeDefined();
+    expect(res.body.checks.database).toBe('ok');
   });
 });
 

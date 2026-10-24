@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+.turbo/
+coverage/
+
+# Generated Prisma client code
+packages/database/src/generated/
+
+# Package manager lockfile
+package-lock.json

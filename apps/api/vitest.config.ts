@@ -8,6 +8,12 @@ export default defineConfig({
       NODE_ENV: 'test',
       DATABASE_URL: 'postgresql://prguardian:prguardian_test@localhost:5432/prguardian_test',
       PORT: '3001',
+      GITHUB_CLIENT_ID: 'test_client_id',
+      GITHUB_CLIENT_SECRET: 'test_client_secret',
+      GITHUB_OAUTH_CALLBACK_URL: 'http://localhost:3001/api/v1/auth/github/callback',
+      FRONTEND_URL: 'http://localhost:5173/auth/callback',
+      SESSION_SECRET: 'test_session_secret_at_least_32_chars_long_xx',
+      SESSION_TTL_SECONDS: '86400',
     },
   },
 });
