@@ -11,7 +11,7 @@
     "typecheck": "tsc --build --noEmit",
     "lint": "eslint src tests",
     "test": "vitest run",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch --env-file=../../.env src/index.ts"
   },
   "dependencies": {
     "@prguardian/database": "*",
