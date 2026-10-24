@@ -3,6 +3,10 @@ node_modules/
 
 # Build outputs
 dist/
+# Prisma generates directly into dist/generated — exclude it from the ignore above
+!packages/database/dist/
+!packages/database/dist/generated/
+!packages/database/dist/generated/**
 .turbo/
 
 # Environment
@@ -10,9 +14,8 @@ dist/
 .env.local
 .env.*.local
 
-# Prisma generated client
+# Prisma generated client (legacy src/generated paths)
 src/generated/
-packages/database/src/generated/
 
 # TypeScript build info
 *.tsbuildinfo
