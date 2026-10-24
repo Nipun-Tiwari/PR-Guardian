@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.js';
+
+const API_BASE = import.meta.env['VITE_API_BASE_URL'] ?? '';
 
 export function LandingPage() {
+  const { user } = useAuth();
+
   return (
     <div className="max-w-2xl mx-auto text-center py-16">
       <div className="mb-4">
@@ -24,13 +29,22 @@ export function LandingPage() {
         >
           View Sample Review →
         </Link>
-        <button
-          disabled
-          title="GitHub integration coming in M2"
-          className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-500 font-medium rounded-lg cursor-not-allowed opacity-60"
-        >
-          Connect GitHub (Coming Soon)
-        </button>
+
+        {user ? (
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Go to Dashboard
+          </Link>
+        ) : (
+          <a
+            href={`${API_BASE}/api/v1/auth/github`}
+            className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Connect GitHub
+          </a>
+        )}
       </div>
 
       <div className="mt-16 grid grid-cols-3 gap-6 text-left">

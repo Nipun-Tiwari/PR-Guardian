@@ -36,6 +36,13 @@ const configSchema = z.object({
   RATE_LIMIT_DEMO_RPM: z.coerce.number().int().min(1).default(60),
   RATE_LIMIT_AUTH_ATTEMPTS: z.coerce.number().int().min(1).default(10),
   API_CORS_ORIGIN: z.string().optional(),
+  GITHUB_CLIENT_ID: z.string().min(1, 'GITHUB_CLIENT_ID is required'),
+  GITHUB_CLIENT_SECRET: z.string().min(1, 'GITHUB_CLIENT_SECRET is required'),
+  GITHUB_OAUTH_CALLBACK_URL: z.string().url('GITHUB_OAUTH_CALLBACK_URL must be a valid URL'),
+  FRONTEND_URL: z.string().url('FRONTEND_URL must be a valid URL'),
+  SESSION_SECRET: z.string().min(32, 'SESSION_SECRET must be at least 32 characters'),
+  SESSION_TTL_SECONDS: z.coerce.number().int().min(60).default(604800),
+  GITHUB_APP_ID: z.coerce.number().int().optional(),
 });
 
 const result = configSchema.safeParse(process.env);

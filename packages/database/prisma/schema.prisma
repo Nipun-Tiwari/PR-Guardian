@@ -8,6 +8,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum InstallationStatus {
+  active
+  removed
+}
+
 model User {
   id             String   @id @default(uuid())
   githubUserId   BigInt   @unique @map("github_user_id")
@@ -15,8 +20,9 @@ model User {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
-  sessions     Session[]
-  repositories Repository[]
+  sessions                Session[]
+  repositories            Repository[]
+  repositoryInstallations RepositoryInstallation[]
 
   @@map("users")
 }
@@ -52,4 +58,23 @@ model Repository {
   @@index([githubInstallationId])
   @@index([ownedByUserId])
   @@map("repositories")
+}
+
+model RepositoryInstallation {
+  id                   String             @id @default(uuid())
+  githubInstallationId BigInt             @unique @map("github_installation_id")
+  githubAccountId      BigInt             @map("github_account_id")
+  githubAccountLogin   String             @map("github_account_login")
+  createdByUserId      String             @map("created_by_user_id")
+  status               InstallationStatus @default(active)
+  installedAt          DateTime           @map("installed_at")
+  removedAt            DateTime?          @map("removed_at")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  createdByUser User @relation(fields: [createdByUserId], references: [id])
+
+  @@index([githubAccountId])
+  @@index([createdByUserId])
+  @@map("repository_installations")
 }
