@@ -40,9 +40,7 @@ export async function createAuthenticatedSession(overrides?: {
   const hmac = createHmac('sha256', SESSION_SECRET)
     .update(sid)
     .digest('base64')
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
+    .replace(/\=+$/, '');
   const signedValue = `s:${sid}.${hmac}`;
   const cookie = `prg_sid=${encodeURIComponent(signedValue)}`;
 
