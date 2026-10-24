@@ -1,5 +1,6 @@
 import session from 'express-session';
 import type { PrismaClient } from '@prguardian/database';
+import type { Prisma } from '@prguardian/database';
 
 type SessionCallback = (err: unknown, session?: session.SessionData | null) => void;
 type DoneCallback = (err?: unknown) => void;
@@ -46,11 +47,11 @@ export class PrismaSessionStore extends session.Store {
         create: {
           id: sid,
           userId,
-          data: data as unknown as Record<string, unknown>,
+          data: data as unknown as Prisma.InputJsonValue,
           expiresAt,
         },
         update: {
-          data: data as unknown as Record<string, unknown>,
+          data: data as unknown as Prisma.InputJsonValue,
           expiresAt,
         },
       })
