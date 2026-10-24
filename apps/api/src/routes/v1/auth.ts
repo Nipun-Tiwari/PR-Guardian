@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { randomBytes } from 'crypto';
-import { OAuthApp } from '@octokit/oauth-app';
 import type { Request, Response, NextFunction } from 'express';
 import type { ApiProblemV1 } from '@prguardian/shared';
 import { config } from '../../config.js';
@@ -10,12 +9,6 @@ import { requireAuth, type RequestWithSession } from '../../middleware/requireAu
 import type { RequestWithId } from '../../middleware/requestId.js';
 
 export const authRouter = Router();
-
-const oauthApp = new OAuthApp({
-  clientType: 'github-app',
-  clientId: config.GITHUB_CLIENT_ID,
-  clientSecret: config.GITHUB_CLIENT_SECRET,
-});
 
 const authLimiter = createAuthLimiter(config.RATE_LIMIT_AUTH_ATTEMPTS);
 authRouter.use(authLimiter);
@@ -51,8 +44,14 @@ authRouter.get('/github', (req: Request, res: Response): void => {
     signed: true,
   });
 
-  const { url } = oauthApp.getWebFlowAuthorizationUrl({ state });
-  res.redirect(url);
+  const params = new URLSearchParams({
+    client_id: config.GITHUB_CLIENT_ID,
+    redirect_uri: config.GITHUB_OAUTH_CALLBACK_URL,
+    state,
+    scope: 'read:user',
+  });
+
+  res.redirect(`https://github.com/login/oauth/authorize?${params.toString()}`);
 });
 
 /** GET /api/v1/auth/github/callback — Handle GitHub OAuth callback */
@@ -136,13 +135,60 @@ authRouter.get(
     }
 
     try {
-      // 4. Exchange code for token
-      const { authentication } = await oauthApp.exchangeWebFlowCode({ code, state: queryState });
+      // 4. Exchange code for token via GitHub OAuth endpoint
+      const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          client_id: config.GITHUB_CLIENT_ID,
+          client_secret: config.GITHUB_CLIENT_SECRET,
+          code,
+          redirect_uri: config.GITHUB_OAUTH_CALLBACK_URL,
+        }),
+      });
+
+      if (!tokenResponse.ok) {
+        res
+          .status(502)
+          .contentType('application/problem+json')
+          .json(
+            problemResponse(
+              req,
+              502,
+              'UPSTREAM_FAILURE',
+              'GitHub token exchange failed',
+              'Failed to exchange authorization code for access token.',
+            ),
+          );
+        return;
+      }
+
+      const tokenData = (await tokenResponse.json()) as { access_token?: string; error?: string };
+      if (!tokenData.access_token) {
+        res
+          .status(400)
+          .contentType('application/problem+json')
+          .json(
+            problemResponse(
+              req,
+              400,
+              'UPSTREAM_FAILURE',
+              'GitHub OAuth error',
+              tokenData.error ?? 'GitHub did not return an access token.',
+            ),
+          );
+        return;
+      }
+
+      const accessToken = tokenData.access_token;
 
       // 5. Fetch GitHub user identity — token used only here, then discarded (D-002)
       const userResponse = await fetch('https://api.github.com/user', {
         headers: {
-          Authorization: `Bearer ${authentication.token}`,
+          Authorization: `Bearer ${accessToken}`,
           Accept: 'application/vnd.github+json',
           'X-GitHub-Api-Version': '2022-11-28',
         },
@@ -165,7 +211,7 @@ authRouter.get(
       }
 
       const githubUser = (await userResponse.json()) as { id: number; login: string };
-      // Token is no longer referenced after this point — discarded per D-002
+      // accessToken is no longer referenced after this point — discarded per D-002
 
       // 6. Upsert user record
       const db = getClient();

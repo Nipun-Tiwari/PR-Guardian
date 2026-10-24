@@ -12,10 +12,10 @@ export class PrismaSessionStore extends session.Store {
     super();
   }
 
-  get(sid: string, callback: SessionCallback): void {
+  override get(sid: string, callback: SessionCallback): void {
     this.db.session
       .findUnique({ where: { id: sid } })
-      .then((row) => {
+      .then((row: { id: string; data: unknown; expiresAt: Date } | null) => {
         if (!row) {
           callback(null, null);
           return;
@@ -31,10 +31,10 @@ export class PrismaSessionStore extends session.Store {
       .catch((err: unknown) => callback(err));
   }
 
-  set(sid: string, data: session.SessionData, callback?: DoneCallback): void {
+  override set(sid: string, data: session.SessionData, callback?: DoneCallback): void {
     const expiresAt = new Date(Date.now() + this.ttlSeconds * 1000);
     // userId must be present before set is called (we only create sessions after auth)
-    const userId = (data as Record<string, unknown>)['userId'];
+    const userId = (data as unknown as Record<string, unknown>)['userId'];
     if (typeof userId !== 'string') {
       callback?.(new Error('Cannot persist session without userId'));
       return;
@@ -46,11 +46,11 @@ export class PrismaSessionStore extends session.Store {
         create: {
           id: sid,
           userId,
-          data: data as Record<string, unknown>,
+          data: data as unknown as Record<string, unknown>,
           expiresAt,
         },
         update: {
-          data: data as Record<string, unknown>,
+          data: data as unknown as Record<string, unknown>,
           expiresAt,
         },
       })
@@ -58,14 +58,14 @@ export class PrismaSessionStore extends session.Store {
       .catch((err: unknown) => callback?.(err));
   }
 
-  destroy(sid: string, callback?: DoneCallback): void {
+  override destroy(sid: string, callback?: DoneCallback): void {
     this.db.session
       .delete({ where: { id: sid } })
       .then(() => callback?.())
       .catch(() => callback?.()); // noop if not found
   }
 
-  touch(sid: string, _data: session.SessionData, callback?: DoneCallback): void {
+  override touch(sid: string, _data: session.SessionData, callback?: DoneCallback): void {
     const expiresAt = new Date(Date.now() + this.ttlSeconds * 1000);
     this.db.session
       .update({ where: { id: sid }, data: { expiresAt } })

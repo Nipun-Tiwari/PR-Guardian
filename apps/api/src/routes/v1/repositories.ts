@@ -29,11 +29,22 @@ repositoriesRouter.get(
       });
 
       res.status(200).json({
-        repositories: repos.map((r) => ({
-          ...r,
-          githubRepositoryId: r.githubRepositoryId.toString(),
-          githubInstallationId: r.githubInstallationId.toString(),
-        })),
+        repositories: repos.map(
+          (r: {
+            id: string;
+            githubRepositoryId: bigint;
+            githubInstallationId: bigint;
+            owner: string;
+            name: string;
+            fullName: string;
+            isActive: boolean;
+            createdAt: Date;
+          }) => ({
+            ...r,
+            githubRepositoryId: r.githubRepositoryId.toString(),
+            githubInstallationId: r.githubInstallationId.toString(),
+          }),
+        ),
         total: repos.length,
       });
     } catch (err) {
