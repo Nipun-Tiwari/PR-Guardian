@@ -13,6 +13,13 @@ enum InstallationStatus {
   removed
 }
 
+enum ReviewJobStatus {
+  pending
+  running
+  succeeded
+  failed
+}
+
 model User {
   id             String   @id @default(uuid())
   githubUserId   BigInt   @unique @map("github_user_id")
@@ -49,11 +56,11 @@ model Repository {
   name                 String
   fullName             String   @map("full_name")
   isActive             Boolean  @default(true) @map("is_active")
-  ownedByUserId        String   @map("owned_by_user_id")
+  ownedByUserId        String?  @map("owned_by_user_id")
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @updatedAt @map("updated_at")
 
-  ownerUser User @relation(fields: [ownedByUserId], references: [id])
+  ownerUser User? @relation(fields: [ownedByUserId], references: [id])
 
   @@index([githubInstallationId])
   @@index([ownedByUserId])
@@ -65,16 +72,47 @@ model RepositoryInstallation {
   githubInstallationId BigInt             @unique @map("github_installation_id")
   githubAccountId      BigInt             @map("github_account_id")
   githubAccountLogin   String             @map("github_account_login")
-  createdByUserId      String             @map("created_by_user_id")
+  createdByUserId      String?            @map("created_by_user_id")
   status               InstallationStatus @default(active)
   installedAt          DateTime           @map("installed_at")
   removedAt            DateTime?          @map("removed_at")
   createdAt            DateTime           @default(now()) @map("created_at")
   updatedAt            DateTime           @updatedAt @map("updated_at")
 
-  createdByUser User @relation(fields: [createdByUserId], references: [id])
+  createdByUser User? @relation(fields: [createdByUserId], references: [id])
 
   @@index([githubAccountId])
   @@index([createdByUserId])
   @@map("repository_installations")
+}
+
+model WebhookDelivery {
+  id               String   @id @default(uuid())
+  githubDeliveryId String   @unique @map("github_delivery_id")
+  event            String
+  action           String?
+  receivedAt       DateTime @default(now()) @map("received_at")
+
+  @@index([receivedAt])
+  @@map("webhook_deliveries")
+}
+
+model ReviewJob {
+  id             String          @id @default(uuid())
+  status         ReviewJobStatus @default(pending)
+  installationId BigInt          @map("installation_id")
+  repositoryId   BigInt          @map("repository_id")
+  prNumber       Int             @map("pr_number")
+  headSha        String          @map("head_sha")
+  attempts       Int             @default(0)
+  maxAttempts    Int             @default(3) @map("max_attempts")
+  leaseExpiresAt DateTime?       @map("lease_expires_at")
+  errorMessage   String?         @map("error_message")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  completedAt    DateTime?       @map("completed_at")
+
+  @@index([status, leaseExpiresAt])
+  @@index([createdAt])
+  @@map("review_jobs")
 }

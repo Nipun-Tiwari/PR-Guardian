@@ -15,7 +15,8 @@
     "@prguardian/api": "*",
     "@prguardian/database": "*",
     "@prguardian/observability": "*",
-    "@prguardian/shared": "*"
+    "@prguardian/shared": "*",
+    "@prguardian/worker": "*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

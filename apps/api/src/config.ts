@@ -42,7 +42,9 @@ const configSchema = z.object({
   FRONTEND_URL: z.string().url('FRONTEND_URL must be a valid URL'),
   SESSION_SECRET: z.string().min(32, 'SESSION_SECRET must be at least 32 characters'),
   SESSION_TTL_SECONDS: z.coerce.number().int().min(60).default(604800),
-  GITHUB_APP_ID: z.coerce.number().int().optional(),
+  GITHUB_APP_ID: z.coerce.number().int().positive('GITHUB_APP_ID must be a positive integer'),
+  GITHUB_APP_PRIVATE_KEY: z.string().min(1, 'GITHUB_APP_PRIVATE_KEY is required'),
+  WEBHOOK_SECRET: z.string().min(1, 'WEBHOOK_SECRET is required'),
 });
 
 const result = configSchema.safeParse(process.env);
